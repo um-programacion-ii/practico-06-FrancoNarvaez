@@ -18,9 +18,9 @@ public class GestionTurnoService {
         this.logTurnos = new ArrayList<>();
     }
 
-    public Turno GestionarTurno() {
-        Persona paciente = atencionMedicoService.obtenerPersona();
-        Medico medico = atencionMedicoService.obtenerMedico();
+    public Turno GestionarTurno(String especialidad) {
+        Persona paciente = atencionMedicoService.obtenerPersona(especialidad);
+        Medico medico = atencionMedicoService.obtenerMedico(especialidad);
 
         if (paciente == null || medico == null) {
             return null;

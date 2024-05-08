@@ -11,21 +11,21 @@ public class AtencionMedicoService {
         this.clinica = clinica;
     }
 
-    public Medico obtenerMedico() {
-        if (!clinica.getMedicos().isEmpty()) {
-            return clinica.getMedicos().removeFirst();
+    public Medico obtenerMedico(String especialidad) {
+        if (!clinica.getMedicosPorEspecialidad().get(especialidad).isEmpty()) {
+            return clinica.getMedicosPorEspecialidad().get(especialidad).removeFirst();
         }
         return null;
     }
 
-    public Persona obtenerPersona() {
-        if (!clinica.getPersonas().isEmpty()) {
-            return clinica.getPersonas().removeFirst();
+    public Persona obtenerPersona(String especialidad) {
+        if (!clinica.getPersonasPorEspecialidad().get(especialidad).isEmpty()) {
+            return clinica.getPersonasPorEspecialidad().get(especialidad).removeFirst();
         }
         return null;
     }
 
     public void devolverMedico(Medico medico) {
-        clinica.getMedicos().add(medico);
+        clinica.getMedicosPorEspecialidad().get(medico.getEspecialidad()).add(medico);
     }
 }

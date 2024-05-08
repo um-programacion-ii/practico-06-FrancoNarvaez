@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -16,7 +17,7 @@ public class Clinica {
     private String direccion;
     private String telefono;
     private String email;
-    private List<Persona> personas;
-    private List<Medico> medicos;
+    private Map<String ,List<Persona>> personasPorEspecialidad;
+    private Map<String, List<Medico>> medicosPorEspecialidad;
 
 }
