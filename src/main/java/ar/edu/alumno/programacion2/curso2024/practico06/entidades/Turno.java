@@ -4,9 +4,7 @@ import ar.edu.alumno.programacion2.curso2024.practico06.service.GestionTurnoServ
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
-
-
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -38,7 +36,7 @@ public class Turno {
         this.recetaGenerada = false;
     }
 
-    public void generarReceta(List<Medicamento> medicamentos) {
+    public void generarReceta(Map<Medicamento, Integer> medicamentos) {
         this.medico.hacerReceta(this.paciente, medicamentos);
         this.recetaGenerada = true;
     }
@@ -47,5 +45,4 @@ public class Turno {
         this.terminado = true;
         gestor.notificarTurnoTerminado(this);
     }
-
 }
