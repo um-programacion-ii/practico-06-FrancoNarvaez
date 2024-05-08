@@ -12,6 +12,6 @@ public class Medicamento {
     private String nombre;
     private String laboratorio;
     private String droga;
-    private String cantidad;
+    private Integer cantidad;
 
 }
