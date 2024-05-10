@@ -18,6 +18,6 @@ public class Clinica {
     private String telefono;
     private String email;
     private Map<String ,List<Persona>> personasPorEspecialidad;
-    private Map<String, List<Medico>> medicosPorEspecialidad;
+    private Map<String, Map<Boolean, List<Medico>>> medicosPorEspecialidad;
 
 }

@@ -16,6 +16,7 @@ public class Persona {
     private boolean usaObraSocial;
     private String obraSocial;
     private List<Receta> recetas;
+    private String especialidad;
 
     public void agregarReceta(Receta receta) {
         this.recetas.add(receta);

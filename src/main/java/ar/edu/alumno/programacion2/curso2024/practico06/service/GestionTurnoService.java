@@ -7,18 +7,33 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Getter
 public class GestionTurnoService {
+    private static GestionTurnoService instance;
     private final AtencionMedicoService atencionMedicoService;
     private final List<Turno> logTurnos;
 
-    public GestionTurnoService(AtencionMedicoService atencionMedicoService) {
+
+    public static GestionTurnoService getInstance(AtencionMedicoService atencionMedicoService) {
+        if (instance == null) {
+            instance = new GestionTurnoService(atencionMedicoService);
+        }
+        return instance;
+    }
+
+
+    private GestionTurnoService(AtencionMedicoService atencionMedicoService) {
         this.atencionMedicoService = atencionMedicoService;
         this.logTurnos = new ArrayList<>();
     }
 
-    public Turno GestionarTurno(String especialidad) {
+
+    public void producirMedico(Medico medico) {
+        atencionMedicoService.agregarMedico(medico);
+    }
+
+
+    public Turno gestionarTurno(String especialidad, boolean atiendePorObraSocial) {
         Persona paciente = atencionMedicoService.obtenerPersona(especialidad);
         Medico medico = atencionMedicoService.obtenerMedico(especialidad);
 
