@@ -1,55 +1,74 @@
 package ar.edu.alumno.programacion2.curso2024.practico06.service;
 
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Medico;
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Turno;
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Persona;
-import lombok.Getter;
-import java.util.ArrayList;
-import java.util.List;
+import ar.edu.alumno.programacion2.curso2024.practico06.entidades.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
+import java.util.*;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class GestionTurnoService {
     private static GestionTurnoService instance;
-    private final AtencionMedicoService atencionMedicoService;
-    private final List<Turno> logTurnos;
+    private AtencionMedicoService atencionMedicoService;
+    private GestionPacienteService gestionPacienteService;
+    private Clinica clinica;
+    private Map<Integer, Turno> turnosTerminados;
 
-
-    public static GestionTurnoService getInstance(AtencionMedicoService atencionMedicoService) {
+    public static GestionTurnoService getInstance() {
         if (instance == null) {
-            instance = new GestionTurnoService(atencionMedicoService);
+            instance = new GestionTurnoService();
         }
         return instance;
     }
 
-
-    private GestionTurnoService(AtencionMedicoService atencionMedicoService) {
-        this.atencionMedicoService = atencionMedicoService;
-        this.logTurnos = new ArrayList<>();
+    public Turno gestionarTurno() {
+        for (Map.Entry<String, Queue<Paciente>> entry : clinica.getPacientesPorEspecialidadYTipo().entrySet()) {
+            Queue<Paciente> pacientes = entry.getValue();
+            if (!pacientes.isEmpty()) {
+                Paciente paciente = pacientes.poll();
+                Queue<Medico> medicos = clinica.getMedicosPorEspecialidadYTipo().get(entry.getKey());
+                if (medicos != null && !medicos.isEmpty()) {
+                    Medico medico = medicos.poll();
+                    Random random = new Random();
+                    if (random.nextBoolean()) {
+                        Receta receta = medico.hacerReceta(paciente);
+                        Turno turno = new Turno(paciente, medico, receta);
+                        terminarTurno(turno);
+                        return turno;
+                    }
+                    Turno turno = new Turno(paciente, medico, Optional.empty());
+                    terminarTurno(turno);
+                    return turno;
+                } else {
+                    pacientes.add(paciente);
+                }
+            }
+        }
+        return null;
     }
 
-
-    public void producirMedico(Medico medico) {
-        atencionMedicoService.agregarMedico(medico);
-    }
-
-
-    public Turno gestionarTurno(String especialidad, boolean atiendePorObraSocial) {
-        Persona paciente = atencionMedicoService.obtenerPersona(especialidad);
-        Medico medico = atencionMedicoService.obtenerMedico(especialidad);
-
-        if (paciente == null || medico == null) {
-            return null;
+    public void terminarTurno(Turno turno) {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
 
-        return new Turno(paciente, medico, this);
+        notificarTurnoTerminado(turno);
     }
+
 
     public void notificarTurnoTerminado(Turno turno) {
-        atencionMedicoService.devolverMedico(turno.getMedico());
-        this.logTurnos.add(turno);
+        if (turno.getMedico().getEspecialidad() != null) {
+            String key = turno.getMedico().getEspecialidad().name() + "-" + turno.getMedico().getObraSocial().getNombre();
+            Queue<Medico> medicos = clinica.getMedicosPorEspecialidadYTipo().get(key);
+            if (medicos != null) {
+                medicos.add(turno.getMedico());
+            }
+            turnosTerminados.put(turno.getPaciente().getDni(), turno);
+        }
     }
 }
-
-    //Logico que el log deberia guardarlo en un archivo o base de datos,
-    // pero no se pide en el enunciado el uso de base de datos.
-

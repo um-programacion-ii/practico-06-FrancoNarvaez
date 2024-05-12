@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class ObraSocial {
     private String nombre;
     private String direccion;
-    private String telefono;
+    private Integer telefono;
 }

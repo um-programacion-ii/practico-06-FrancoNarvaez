@@ -1,17 +1,12 @@
 package ar.edu.alumno.programacion2.curso2024.practico06.service;
 
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Farmacia;
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Medicamento;
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Receta;
-
+import ar.edu.alumno.programacion2.curso2024.practico06.entidades.*;
 import java.util.Map;
 
 public class GestionFarmaciaService {
     private static GestionFarmaciaService instance;
-
-    private GestionFarmaciaService() {}
-
-    public static GestionFarmaciaService getInstance() {
+    private Drogeria drogeria = Drogeria.getInstance();
+    public static  GestionFarmaciaService getInstance() {
         if (instance == null) {
             instance = new GestionFarmaciaService();
         }
@@ -19,15 +14,14 @@ public class GestionFarmaciaService {
     }
 
     public void procesarReceta(Receta receta, Farmacia farmacia) {
-        Map<Medicamento, Integer> medicamentos = receta.getMedicamentos();
-        for (Map.Entry<Medicamento, Integer> entry : medicamentos.entrySet()) {
+        for (Map.Entry<Medicamento, Integer> entry : receta.getMedicamentos().entrySet()) {
             Medicamento medicamento = entry.getKey();
-            Integer cantidadNecesaria = entry.getValue();
-            if (!farmacia.getStockMedicamentosFarmacia().containsKey(medicamento.getNombre()) ||
-                    farmacia.getStockMedicamentosFarmacia().get(medicamento.getNombre()).getCantidad() < cantidadNecesaria) {
-                GestionStockService gestionStockService = GestionStockService.getInstance();
-                gestionStockService.pedirMedicamento(medicamento, cantidadNecesaria, farmacia);
+            Integer cantidad = entry.getValue();
+            if (farmacia.getStockMedicamentosFarmacia(medicamento) < cantidad) {
+                Medicamento medicamentoSolicitado = drogeria.getMedicamento(medicamento.getNombre());
+                farmacia.agregarStock(medicamentoSolicitado, medicamentoSolicitado.getCantidad());
             }
+            farmacia.modificarStock(medicamento, farmacia.getStockMedicamentosFarmacia(medicamento) - cantidad);
         }
     }
 }

@@ -1,14 +1,18 @@
 package ar.edu.alumno.programacion2.curso2024.practico06.service;
 
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Drogeria;
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Farmacia;
 import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Medicamento;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class GestionStockService {
     private static GestionStockService instance;
-
-    private GestionStockService() {}
-
+    private HashMap<Medicamento, Integer> stockMedicamentosFarmacia;
     public static GestionStockService getInstance() {
         if (instance == null) {
             instance = new GestionStockService();
@@ -16,10 +20,19 @@ public class GestionStockService {
         return instance;
     }
 
-    public void pedirMedicamento(Medicamento medicamento, Integer cantidad, Farmacia farmacia) {
-        Drogeria drogeria = new Drogeria();
-        Medicamento medicamentoNuevo = drogeria.getStockMedicamentosDrogeria().get(medicamento.getNombre());
-        medicamentoNuevo.setCantidad(cantidad);
-        farmacia.getStockMedicamentosFarmacia().put(medicamentoNuevo.getNombre(), medicamentoNuevo);
+    public void agregarStock(Medicamento medicamento, Integer cantidad) {
+        stockMedicamentosFarmacia.put(medicamento, cantidad);
+    }
+
+    public void quitarStock(Medicamento medicamento) {
+        stockMedicamentosFarmacia.remove(medicamento);
+    }
+
+    public void modificarStock(Medicamento medicamento, Integer cantidad) {
+        stockMedicamentosFarmacia.put(medicamento, cantidad);
+    }
+
+    public Integer obtenerStock(Medicamento medicamento) {
+        return stockMedicamentosFarmacia.get(medicamento);
     }
 }

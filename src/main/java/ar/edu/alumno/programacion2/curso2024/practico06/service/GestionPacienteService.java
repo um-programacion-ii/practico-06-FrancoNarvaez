@@ -1,23 +1,33 @@
 package ar.edu.alumno.programacion2.curso2024.practico06.service;
 
-import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Persona;
+import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Clinica;
+import ar.edu.alumno.programacion2.curso2024.practico06.entidades.Paciente;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class GestionPacienteService {
     private static GestionPacienteService instance;
-    private final AtencionMedicoService atencionMedicoService;
+    private Clinica clinica;
 
-    private GestionPacienteService(AtencionMedicoService atencionMedicoService) {
-        this.atencionMedicoService = atencionMedicoService;
-    }
-
-    public static GestionPacienteService getInstance(AtencionMedicoService atencionMedicoService) {
+    public static GestionPacienteService getInstance() {
         if (instance == null) {
-            instance = new GestionPacienteService(atencionMedicoService);
+            instance = new GestionPacienteService();
         }
         return instance;
     }
 
-    public void producirPersona(Persona persona) {
-        atencionMedicoService.agregarPersona(persona);
+
+    public void agregarPaciente(Paciente paciente) {
+        String key = paciente.getEspecialidad().name() + "-" + paciente.getObraSocial().getNombre();
+        Queue<Paciente> pacientes = clinica.getPacientesPorEspecialidadYTipo().computeIfAbsent(key, k -> new LinkedList<>());
+        pacientes.add(paciente);
     }
 }
